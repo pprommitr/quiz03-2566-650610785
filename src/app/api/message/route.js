@@ -6,33 +6,53 @@ import { NextResponse } from "next/server";
 export const GET = async (request) => {
   readDB();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  const roomId = request.nextUrl.searchParams.get("roomId");
+  const room = DB.rooms.find((room) => room.roomId === roomId);
+  if (!room) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `Room is not found`,
+      },
+      { status: 404 }
+    );
+  }
+
+  const messages = DB.messages.filter((message) => message.roomId === roomId);
+  return NextResponse.json({
+    ok: true,
+    messages,
+  });
 };
 
 export const POST = async (request) => {
   readDB();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  const body = await request.json();
+  const { roomId, messageText } = body;
+  const room = DB.rooms.find((room) => room.roomId === roomId);
+  if (!room) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `Room is not found`,
+      },
+      { status: 404 }
+    );
+  }
 
   const messageId = nanoid();
+  DB.messages.push({
+    roomId,
+    messageId,
+    messageText,
+  });
 
   writeDB();
 
   return NextResponse.json({
     ok: true,
-    // messageId,
+    messageId,
     message: "Message has been sent",
   });
 };
@@ -40,23 +60,33 @@ export const POST = async (request) => {
 export const DELETE = async (request) => {
   const payload = checkToken();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Invalid token",
-  //   },
-  //   { status: 401 }
-  // );
+  if (!payload || payload.role !== "SUPER_ADMIN") {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Invalid token",
+      },
+      { status: 401 }
+    );
+  }
 
   readDB();
 
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Message is not found",
-  //   },
-  //   { status: 404 }
-  // );
+  const body = await request.json();
+  const { messageId } = body;
+  const messageIndex = DB.messages.findIndex(
+    (message) => message.messageId === messageId
+  );
+  if (messageIndex === -1) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Message is not found",
+      },
+      { status: 404 }
+    );
+  }
+  DB.messages.splice(messageIndex, 1);
 
   writeDB();
 

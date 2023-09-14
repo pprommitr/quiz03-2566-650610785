@@ -16,14 +16,14 @@
       "messageText": "Hi bro!"
     },
     {
-      "roomId": "okhkUzffzCGMqtfC1uv6x",
-      "messageId": "f8rM7yKv7FRLokgwU7wfg",
-      "messageText": "Hi everyone"
-    },
-    {
       "roomId": "HhVrDzdfsW-dS0YGOzrV3",
       "messageId": "mBE0AghdK3uwb_yvX9n35",
       "messageText": "Can anyone teach me RESTFul API?"
+    },
+    {
+      "roomId": "okhkUzffzCGMqtfC1uv6x",
+      "messageId": "7kCiZcS-mLqaoRimsm-Cn",
+      "messageText": "สวัสดีจ่ะ"
     }
   ],
   "users": [
